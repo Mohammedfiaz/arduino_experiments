@@ -1,0 +1,58 @@
+// using a an ultrasonic range finder (pins 7 and 8)
+// changes the colour of a red light (from green to red)
+// depending on distance (red on 6, green on 9)
+// and make a noise higher or lower noise on a piezo
+// buzzer on pin 12 (the lower the distance the higher the pitch)
+
+#define echoPin 7 // Echo Pin
+#define trigPin 8 // Trigger Pin
+#define LEDPin 13 // Onboard LED
+
+int maximumRange = 50; // Maximum range needed
+int minimumRange = 0; // Minimum range needed
+long duration, distance; // Duration used to calculate distance
+
+void setup() {
+ Serial.begin (9600);
+ pinMode(trigPin, OUTPUT);
+ pinMode(echoPin, INPUT);
+ pinMode(LEDPin, OUTPUT);
+  
+ pinMode(12, OUTPUT);
+
+  pinMode(6, OUTPUT);
+  pinMode(10, OUTPUT);
+  pinMode(9, OUTPUT);
+}
+
+void loop() {
+ digitalWrite(trigPin, LOW); 
+ delayMicroseconds(2); 
+
+ digitalWrite(trigPin, HIGH);
+ delayMicroseconds(10); 
+ 
+ digitalWrite(trigPin, LOW);
+ duration = pulseIn(echoPin, HIGH);
+ 
+ distance = duration/58.2;
+ 
+ if (distance >= maximumRange || distance <= minimumRange){
+ Serial.println("-1");
+ digitalWrite(LEDPin, HIGH); 
+ int red = 0;
+ int green = 0; 
+ analogWrite(6, red);
+ analogWrite(9, green); 
+ }
+ else {
+ Serial.println(distance);
+ digitalWrite(LEDPin, LOW); 
+ int green = (int)distance;
+ int red = maximumRange - green;
+ analogWrite(6, red);
+ analogWrite(9, green);
+ tone(12, red*100, 62);
+ }
+ delay(30);
+}
