@@ -1,0 +1,66 @@
+// Display a binary number (from 0 to 63) on 6 LED lights
+// from the distance in centimeters measured by ultrasonic 
+// range finder
+
+int l1  = 13;
+int l2  = 12;
+int l4  = 11;
+int l8  = 10;
+int l16 = 9;
+int l32 = 8;
+
+int echo = 2; 
+int trig = 3;
+
+void setup() {
+ pinMode(l1, OUTPUT);
+ pinMode(l2, OUTPUT);
+ pinMode(l4, OUTPUT);
+ pinMode(l8, OUTPUT);
+ pinMode(l16, OUTPUT);
+ pinMode(l32, OUTPUT);
+ pinMode(trig, OUTPUT);
+ pinMode(echo, INPUT);
+ Serial.begin (9600);
+}
+
+void loop() {
+ digitalWrite(trig, LOW); 
+ delayMicroseconds(2); 
+ digitalWrite(trig, HIGH);
+ delayMicroseconds(10); 
+ digitalWrite(trig, LOW);
+ long duration = pulseIn(echo, HIGH);
+ long distance = duration/58.2;
+ if (distance > 63) distance = 0;
+ binDisplay((int)distance);
+ Serial.println((int)distance);
+ delay(50);
+}
+
+void binDisplay(int n){
+  digitalWrite(l1, LOW);
+  digitalWrite(l2, LOW);
+  digitalWrite(l4, LOW);
+  digitalWrite(l8, LOW);
+  digitalWrite(l16, LOW);
+  digitalWrite(l32, LOW);
+  if ((n & 1) != 0){
+    digitalWrite(l1, HIGH);
+  }
+  if ((n & 2) != 0){
+    digitalWrite(l2, HIGH);
+  }
+  if ((n & 4) != 0){
+    digitalWrite(l4, HIGH);
+  }
+  if ((n & 8) != 0){
+    digitalWrite(l8, HIGH);
+  }
+  if ((n & 16) != 0){
+    digitalWrite(l16, HIGH);
+  }
+  if ((n & 32) != 0){
+    digitalWrite(l32, HIGH);
+  }
+}
